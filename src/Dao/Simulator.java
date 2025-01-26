@@ -1,13 +1,13 @@
 package Dao;
 
-import java.util.List;
+import Estructura.Lista;
 
 /**
  *
  * @author Dilan891
  */
 public class Simulator {
-    private List<ParametersProcess> procesos;
+    private Lista<ParametersProcess> procesos;
     private Configuration configuracion;
 
     @Override
@@ -16,17 +16,17 @@ public class Simulator {
     }
     
     //constructor
-    public Simulator(List<ParametersProcess> procesos, Configuration configuracion) {
+    public Simulator(Lista<ParametersProcess> procesos, Configuration configuracion) {
         this.procesos = procesos;
         this.configuracion = configuracion;
     }
     
     //getter and setters
-    public List<ParametersProcess> getProcesos() {
+    public Lista<ParametersProcess> getProcesos() {
         return procesos;
     }
 
-    public void setProcesos(List<ParametersProcess> procesos) {
+    public void setProcesos(Lista<ParametersProcess> procesos) {
         this.procesos = procesos;
     }
 

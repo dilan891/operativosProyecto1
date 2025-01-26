@@ -3,8 +3,10 @@ package proyectoop.io;
 import Dao.Configuration;
 import Dao.ParametersProcess;
 import Dao.Simulator;
+import Estructura.Lista;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,9 +27,21 @@ public class LeerEscribirArchivo {
     public Simulator LeerArchivo() {
         try {
             System.out.println("Cargando datos");
-            List<String> lineas = Files.readAllLines(Path.of(fileDir));
+            //verifica si el archivo existe, si no existe lo crea
+            if (!Files.exists(Path.of(fileDir))) {
+                System.out.println("El archivo no existe, creando archivo");
+                Files.createFile(Path.of(fileDir));
+                EscribirDefaultData();
+                return null;
+            }
+            List<String> lineas = Files.readAllLines(Path.of(fileDir)); //Cambiar a Lista
             Configuration configuration = new Configuration(0, 0);
-            List<ParametersProcess> processList = new ArrayList<>();
+            Lista<ParametersProcess> processList = new Lista();
+            //verifica si el archivo esta vacio
+            if (lineas.isEmpty()) {
+                System.out.println("El archivo esta vacio");
+                EscribirDefaultData();
+            }
             for (int i = 0; i < lineas.size(); i++) {
                 System.out.println(lineas.get(i));
                 switch (i) {
@@ -61,16 +75,16 @@ public class LeerEscribirArchivo {
                             } else if (j == 2) {
                                 String type = linea[j].split("type: ")[1];
                                 process.setType(type);
-                            }else if(j == 3 && process.getType().equals("io_bound")){
+                            } else if (j == 3 && process.getType().equals("io_bound")) {
                                 String cycle_exeption = linea[j].split("cycle_exeption: ")[1];
                                 process.setNumberOfCyclesE(Integer.parseInt(cycle_exeption));
-                            }else if(j == 4 && process.getType().equals("io_bound")){
+                            } else if (j == 4 && process.getType().equals("io_bound")) {
                                 String cycle = linea[j].split("cycle_satisfaction: ")[1];
                                 process.setNumberOfCyclesS(Integer.parseInt(cycle));
                             }
                         }
                         // Agregamos el proceso a la lista de procesos
-                        processList.add(process);
+                        processList.insertFinal(process);
                         break;
                 }
             }
@@ -78,11 +92,34 @@ public class LeerEscribirArchivo {
             System.out.println(processList);
             Simulator simulador = new Simulator(processList, configuration);
             System.out.println(simulador);
+            simulador.getProcesos().printLista();
             return simulador;
         } catch (IOException e) {
+            System.out.println("El archivo no se encontro");
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void EscribirDefaultData() {
+        try {
+            String[] lines = {
+                "configuration:",
+                "num_cpu: 2",
+                "duration_cycle: 1000",
+                "Procesos:",
+                "- name: P1, instruction: 10, type: cpu_bound",
+                "- name: P2, instruction: 10, type: io_bound, cycle_exeption: 5, cycle_satisfaction: 10"
+            };
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileDir, true))) {
+                for (String line : lines) {
+                    writer.write(line);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getFileName() {

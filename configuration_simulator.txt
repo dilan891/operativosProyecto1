@@ -1,0 +1,6 @@
+configuration:
+num_cpu: 2
+duration_cycle: 5
+proccess:
+- name: prueba, instruction: 2, type: cpu_bound, cycle_exeption: N/A, cycle_satisfaction: N/A
+- name: prueba2, instruction: 2, type: io_bound, cycle_exeption: 3, cycle_satisfaction: 7
