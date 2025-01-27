@@ -1,10 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 package proyectoop;
 
 import Dao.Simulator;
+import GUI.Classes.Menu;
 import java.io.File;
 import proyectoop.io.LeerEscribirArchivo;
 
@@ -27,6 +24,10 @@ public class ProyectoOp {
         LeerEscribirArchivo data = new LeerEscribirArchivo(archivoConfig.getAbsolutePath());
         Simulator simulatorData = data.LeerArchivo();
        
+        //Abre la interfaz grafica
+        Menu menu = new Menu(simulatorData);
+        menu.setVisible(true);
+
     }
     
 }

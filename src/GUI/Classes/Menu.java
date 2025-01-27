@@ -4,12 +4,21 @@
  */
 package GUI.Classes;
 
+import Dao.Simulator;
+
 /**
  *
  * @author Dilan891
  */
 public class Menu extends javax.swing.JFrame {
-
+    Simulator simulatorData;
+    
+    public Menu(Simulator simulatorData){
+        this.simulatorData = simulatorData;
+        initComponents();
+    }
+    
+ 
     /**
      * Creates new form Menu
      */

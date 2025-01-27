@@ -5,8 +5,10 @@
         <group>
             <file>file:/A:/Documentos/NetBeansProjects/ProyectoOp/src/Dao/Configuration.java</file>
             <file>file:/A:/Documentos/NetBeansProjects/ProyectoOp/src/proyectoop/io/LeerEscribirArchivo.java</file>
+            <file>file:/A:/Documentos/NetBeansProjects/ProyectoOp/src/Estructura/Nodo.java</file>
             <file>file:/A:/Documentos/NetBeansProjects/ProyectoOp/src/GUI/Classes/Menu.java</file>
             <file>file:/A:/Documentos/NetBeansProjects/ProyectoOp/src/proyectoop/ProyectoOp.java</file>
+            <file>file:/A:/Documentos/NetBeansProjects/ProyectoOp/src/Estructura/Lista.java</file>
             <file>file:/A:/Documentos/NetBeansProjects/ProyectoOp/src/Dao/Simulator.java</file>
             <file>file:/A:/Documentos/NetBeansProjects/ProyectoOp/src/Dao/ParametersProcess.java</file>
         </group>
