@@ -1,7 +1,7 @@
 package proyectoop.io;
 
 import Dao.Configuration;
-import Dao.ParametersProcess;
+import Dao.Proceso;
 import Dao.Simulator;
 import Estructura.Lista;
 import java.io.BufferedWriter;
@@ -36,14 +36,14 @@ public class LeerEscribirArchivo {
             }
             List<String> lineas = Files.readAllLines(Path.of(fileDir)); //Cambiar a Lista
             Configuration configuration = new Configuration(0, 0);
-            Lista<ParametersProcess> processList = new Lista();
+            Lista<Proceso> processList = new Lista();
             //verifica si el archivo esta vacio
             if (lineas.isEmpty()) {
                 System.out.println("El archivo esta vacio");
                 EscribirDefaultData();
             }
             for (int i = 0; i < lineas.size(); i++) {
-                System.out.println(lineas.get(i));
+                //System.out.println(lineas.get(i));
                 switch (i) {
                     case 0:
                     case 3:
@@ -61,7 +61,7 @@ public class LeerEscribirArchivo {
                         break;
                     default:
                         // En el caso de que i no sea 0, 1, 2 o 3
-                        ParametersProcess process = new ParametersProcess();
+                        Proceso process = new Proceso();
                         String[] linea = lineas.get(i).split(", ");
                         for (int j = 0; j < linea.length; j++) {
                             System.out.println(linea[j]);
@@ -88,11 +88,12 @@ public class LeerEscribirArchivo {
                         break;
                 }
             }
-            System.out.println(configuration);
-            System.out.println(processList);
+            //System.out.println(configuration);
+            processList.printLista();
+            
             Simulator simulador = new Simulator(processList, configuration);
-            System.out.println(simulador);
-            simulador.getProcesos().printLista();
+            //System.out.println(simulador);
+            //simulador.getProcesos().printLista();
             return simulador;
         } catch (IOException e) {
             System.out.println("El archivo no se encontro");

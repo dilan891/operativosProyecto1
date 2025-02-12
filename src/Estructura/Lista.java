@@ -57,6 +57,23 @@ public class Lista<T> {
     length ++;
     }
     
+    public Cola insertarListaEnCola(Lista<T> lista, Cola<T> cola) {
+        if (lista.isEmpty()) {
+            System.out.println("La lista está vacía, no hay elementos para encolar.");
+            return null;
+        }
+
+        Nodo<T> pointer = (Nodo<T>) lista.getHead(); // Obtén el primer nodo de la lista
+        while (pointer != null) {
+            T elemento = (T) pointer.getElement(); // Obtén el elemento del nodo actual
+            cola.encolar(elemento); // Encola el elemento en la cola
+            pointer = (Nodo<T>) pointer.getNext(); // Avanza al siguiente nodo
+        }
+
+        System.out.println("Elementos de la lista insertados en la cola correctamente.");
+        return cola;
+    }
+    
     public void insertFinal(Object element){
         Nodo node = new Nodo(element);
         if (isEmpty()){

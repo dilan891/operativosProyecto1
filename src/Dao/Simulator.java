@@ -1,34 +1,40 @@
 package Dao;
 
+import Estructura.Cola;
 import Estructura.Lista;
+import Estructura.Nodo;
+import java.util.List;
 
 /**
  *
  * @author Dilan891
  */
 public class Simulator {
-    private Lista<ParametersProcess> procesos;
-    private Configuration configuracion;
 
-    @Override
-    public String toString() {
-        return "Simulator{" + "procesos=" + procesos + ", configuracion=" + configuracion + '}';
-    }
-    
+    private Cola listos;
+    private Cola bloqueados;
+    private Configuration configuracion;
+    Lista<CPU> cpus;
+    //PoliticaPlanificacion politicaActual;
+
     //constructor
-    public Simulator(Lista<ParametersProcess> procesos, Configuration configuracion) {
-        this.procesos = procesos;
+    public Simulator(Configuration configuracion) {
         this.configuracion = configuracion;
     }
-    
-    //getter and setters
-    public Lista<ParametersProcess> getProcesos() {
-        return procesos;
+
+    public Simulator(Lista<Proceso> procesos, Configuration configuracion) {
+        this.configuracion = configuracion;
+        this.listos = new Cola(); // Inicializa la cola de procesos listos
+
+        this.listos = procesos.insertarListaEnCola(procesos, listos);
+        
+        this.listos.imprimirCola();
+        // Inicializa las otras colas y estructuras necesarias
+        this.bloqueados = new Cola();
+        this.cpus = new Lista<>();
+
     }
 
-    public void setProcesos(Lista<ParametersProcess> procesos) {
-        this.procesos = procesos;
-    }
 
     public Configuration getConfiguracion() {
         return configuracion;
@@ -37,6 +43,21 @@ public class Simulator {
     public void setConfiguracion(Configuration configuracion) {
         this.configuracion = configuracion;
     }
-    
-    
+
+    public Cola getListos() {
+        return listos;
+    }
+
+    public void setListos(Cola listos) {
+        this.listos = listos;
+    }
+
+    public Cola getBloqueados() {
+        return bloqueados;
+    }
+
+    public void setBloqueados(Cola bloqueados) {
+        this.bloqueados = bloqueados;
+    }
+
 }

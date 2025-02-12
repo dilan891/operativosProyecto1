@@ -4,7 +4,7 @@ package Dao;
  *
  * @author Dilan891
  */
-public class ParametersProcess {
+public class Proceso {
     private String name;
     private Integer instructionCant;
     private String type;
@@ -18,7 +18,7 @@ public class ParametersProcess {
     }
 
     //constructor io_bound
-    public ParametersProcess(String name, Integer instructionCant, String type, Integer numberOfCyclesE, Integer numberOfCyclesS) {
+    public Proceso(String name, Integer instructionCant, String type, Integer numberOfCyclesE, Integer numberOfCyclesS) {
         this.name = name;
         this.instructionCant = instructionCant;
         this.type = type;
@@ -26,11 +26,11 @@ public class ParametersProcess {
         this.cyclesSatifaction = numberOfCyclesS;
     }
 
-    public ParametersProcess() {
+    public Proceso() {
     }
     
     //constructor cpu_bound
-    public ParametersProcess(String name, Integer instructionCant, String type) {
+    public Proceso(String name, Integer instructionCant, String type) {
         this.name = name;
         this.instructionCant = instructionCant;
         this.type = type;
