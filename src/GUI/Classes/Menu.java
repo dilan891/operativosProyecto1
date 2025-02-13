@@ -143,7 +143,7 @@ public class Menu extends javax.swing.JFrame {
         LeerEscribirArchivo data = new LeerEscribirArchivo(archivoConfig.getAbsolutePath());
         this.simulatorData = data.LeerArchivo();
         
-        Ejecución ventana = new Ejecución();
+        Ejecución ventana = new Ejecución(this.simulatorData);
         ventana.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 

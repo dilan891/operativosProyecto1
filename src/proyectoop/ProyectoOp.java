@@ -2,6 +2,7 @@ package proyectoop;
 
 import Dao.Simulator;
 import Estructura.Cola;
+import GUI.Classes.Configuracion;
 import GUI.Classes.Menu;
 import java.io.File;
 import proyectoop.io.LeerEscribirArchivo;
@@ -19,9 +20,12 @@ public class ProyectoOp {
         // TODO code application logic here
          
         //Abre la interfaz grafica
-        Menu menu = new Menu();
-        menu.setVisible(true);
+        //Menu menu = new Menu();
+        //menu.setVisible(true);
 
+        Configuracion ventana = new Configuracion();
+        ventana.setVisible(true);
+        
     }
     
 }
