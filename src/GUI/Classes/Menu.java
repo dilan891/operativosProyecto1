@@ -132,12 +132,15 @@ public class Menu extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        Configuracion ventana = new Configuracion();
+        ventana.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         String userHome = System.getProperty("user.home");
-        File documentosDir = new File(userHome, "Desktop");
+        File documentosDir = new File(userHome, "OneDrive/Desktop");
         File archivoConfig = new File(documentosDir, "configuration_simulator.txt");
         
         LeerEscribirArchivo data = new LeerEscribirArchivo(archivoConfig.getAbsolutePath());

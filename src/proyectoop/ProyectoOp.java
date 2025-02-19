@@ -20,11 +20,11 @@ public class ProyectoOp {
         // TODO code application logic here
          
         //Abre la interfaz grafica
-        //Menu menu = new Menu();
-        //menu.setVisible(true);
+        Menu menu = new Menu();
+        menu.setVisible(true);
 
-        Configuracion ventana = new Configuracion();
-        ventana.setVisible(true);
+        //Configuracion ventana = new Configuracion();
+        //ventana.setVisible(true);
         
     }
     

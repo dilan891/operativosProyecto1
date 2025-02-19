@@ -1,6 +1,7 @@
 package GUI.Classes;
 
 import Dao.Proceso;
+import Dao.Simulator;
 import Estructura.Lista;
 import java.io.File;
 import proyectoop.io.LeerEscribirArchivo;
@@ -211,12 +212,15 @@ public class Configuracion extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         String userHome = System.getProperty("user.home");
-        File documentosDir = new File(userHome, "Desktop");
+        File documentosDir = new File(userHome, "OneDrive/Desktop");
         File archivoConfig = new File(documentosDir, "configuration_simulator.txt");
-        
+        System.out.println("Se guarda en: " + archivoConfig.getAbsolutePath());
         LeerEscribirArchivo archivo = new LeerEscribirArchivo(archivoConfig.getAbsolutePath());
         archivo.EscribirData(this.procesos);
-
+        //Crea el simulador data que se pasa a ejecucion uwu
+        Simulator simuladorData = archivo.LeerArchivo(); // scaramouche oniichan
+        Ejecución ventana = new Ejecución(simuladorData);
+        ventana.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     public final void resetList() {
