@@ -122,6 +122,31 @@ public class LeerEscribirArchivo {
             e.printStackTrace();
         }
     }
+    
+    public void EscribirData(Lista<Proceso> lista){
+        try {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileDir, false))) {
+                writer.write("configuration:");
+                writer.newLine();
+                writer.write("num_cpu: 2");
+                writer.newLine();
+                writer.write("duration_cycle: 1000");
+                writer.newLine();
+                writer.write("Procesos:");
+                writer.newLine();
+                for (int i = 0; i < lista.getLength(); i++) {
+                    Proceso proceso = (Proceso) lista.get(i);
+                    writer.write("- name: " + proceso.getName() + ", instruction: " + proceso.getInstructionCant() + ", type: " + proceso.getType());
+                    if (proceso.getType().equals("io_bound")) {
+                        writer.write(", cycle_exeption: " + proceso.getNumberOfCyclesE() + ", cycle_satisfaction: " + proceso.getNumberOfCyclesS());
+                    }
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public String getFileName() {
         return fileDir;

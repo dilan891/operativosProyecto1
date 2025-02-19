@@ -1,6 +1,10 @@
 package GUI.Classes;
 
+import Dao.Proceso;
 import Estructura.Lista;
+import java.io.File;
+import proyectoop.io.LeerEscribirArchivo;
+
 import javax.swing.DefaultListModel;
 
 /**
@@ -8,7 +12,8 @@ import javax.swing.DefaultListModel;
  * @author Dilan891
  */
 public class Configuracion extends javax.swing.JFrame {
-    Lista<Process> procesos = new Lista();
+
+    Lista<Proceso> procesos = new Lista();
 
     /**
      * Creates new form Configuracion
@@ -81,7 +86,12 @@ public class Configuracion extends javax.swing.JFrame {
 
         jLabel4.setText("Procesos a añadir");
 
-        jButton2.setText("Guardar");
+        jButton2.setText("Guardar y Ejecutar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -117,7 +127,7 @@ public class Configuracion extends javax.swing.JFrame {
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(148, 148, 148)
                                 .addComponent(jButton2)))))
-                .addContainerGap(336, Short.MAX_VALUE))
+                .addContainerGap(282, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -165,8 +175,23 @@ public class Configuracion extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Añade contenido de los ddatos del procesador a la lista
+     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        String nombre = this.jTextField1.getText();
+        String instrucciones = this.jTextField2.getText();
+        String tipo = this.jRadioButton1.isSelected() ? "cpu_bound" : "io_bound";
+        String proceso = nombre + " " + instrucciones + " " + tipo;
+        Proceso p = new Proceso(nombre, Integer.parseInt(instrucciones), tipo);
+        DefaultListModel<String> modelo = (DefaultListModel<String>) this.jList1.getModel();
+        modelo.addElement(proceso);
+        this.jList1.setModel(modelo);
+        this.procesos.insertFinal(p);
+        //Borra los campos
+        this.jTextField1.setText("");
+        this.jTextField2.setText("");
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -179,7 +204,21 @@ public class Configuracion extends javax.swing.JFrame {
         // TODO add your handling code here:
         jRadioButton1.setSelected(false);
     }//GEN-LAST:event_jRadioButton2ActionPerformed
-    
+
+    /**
+     * Guarda en txt y abre cambia a la ventana de ejecución
+     */
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        String userHome = System.getProperty("user.home");
+        File documentosDir = new File(userHome, "Desktop");
+        File archivoConfig = new File(documentosDir, "configuration_simulator.txt");
+        
+        LeerEscribirArchivo archivo = new LeerEscribirArchivo(archivoConfig.getAbsolutePath());
+        archivo.EscribirData(this.procesos);
+
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     public final void resetList() {
         DefaultListModel<String> modelo = new DefaultListModel<>();
         this.jList1.setModel(modelo);

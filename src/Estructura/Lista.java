@@ -217,4 +217,24 @@ public class Lista<T> {
             setHead((T) newPointer);
         }
     }
+
+    public Object get(int index) {
+        if (isEmpty()) {
+            System.out.println("List is Empty!");
+            return null;
+        } else {
+            if (index > length) {
+                System.out.println("Error in index!");
+                return null;
+            } else {
+                Nodo pointer = (Nodo) getHead();
+                int count = 0;
+                while (pointer != null && count < index) {
+                    pointer = (Nodo) pointer.getNext();
+                    count++;
+                }
+                return pointer.getElement();
+            }
+        }
+    }
 }

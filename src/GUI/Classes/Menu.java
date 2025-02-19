@@ -136,7 +136,7 @@ public class Menu extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-          String userHome = System.getProperty("user.home");
+        String userHome = System.getProperty("user.home");
         File documentosDir = new File(userHome, "Desktop");
         File archivoConfig = new File(documentosDir, "configuration_simulator.txt");
         
