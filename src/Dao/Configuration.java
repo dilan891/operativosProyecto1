@@ -19,7 +19,6 @@ public class Configuration {
         return "Configuration{" + "cycleDuration=" + cycleDuration + ", numCores=" + numCores + '}';
     }
     
-    
     public Integer getCycleDuration() {
         return cycleDuration;
     }

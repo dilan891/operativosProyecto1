@@ -1,37 +1,40 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package GUI.Classes;
 
 import Dao.Proceso;
 import Dao.Simulator;
 import Estructura.Cola;
+import Estructura.Lista;
+import Estructura.Nodo;
 import javax.swing.DefaultListModel;
+import javax.swing.SwingUtilities;
 
 /**
  *
  * @author Dilan891
  */
-public class Ejecución extends javax.swing.JFrame {
+public class Ejecucion extends javax.swing.JFrame {
 
     Simulator simulator;
 
     /**
      * Creates new form Ejecución
      */
-    public Ejecución() {
+    public Ejecucion() {
         initComponents();
     }
 
-    public Ejecución(Simulator simulator) {
+    public Ejecucion(Simulator simulator) {
         initComponents();
-        System.out.println("se ejecuta");
         //Carga las listas
         this.actualizarJListConCola(simulator.getListos(), ColaListos);
         this.actualizarJListConCola(simulator.getBloqueados(), ColaBloqueados); //wuu
-        this.actualizarJListConCola(simulator.getBloqueados(), CpuList);
+        this.actualizarCPUs(this.CpuList, simulator);
+        simulator.setVentana(this);
         this.simulator = simulator;
+    }
+
+    public Simulator getSimulator() {
+        return this.simulator;
     }
 
     /**
@@ -45,31 +48,30 @@ public class Ejecución extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        ColaListos = new javax.swing.JList<>();
-        jButton1 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         ColaBloqueados = new javax.swing.JList<>();
+        jLabel2 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         CpuList = new javax.swing.JList<>();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        ColaListos = new javax.swing.JList<>();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Listos");
-
-        ColaListos.setModel(new javax.swing.AbstractListModel<String>() {
+        ColaBloqueados.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane1.setViewportView(ColaListos);
+        jScrollPane2.setViewportView(ColaBloqueados);
+
+        jLabel2.setText("Bloqueados");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -78,21 +80,20 @@ public class Ejecución extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(55, 55, 55)
-                        .addComponent(jLabel1))
+                        .addContainerGap()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(30, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)))
+                .addContainerGap(93, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(109, Short.MAX_VALUE))
+                .addComponent(jLabel2)
+                .addGap(10, 10, 10)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(111, Short.MAX_VALUE))
         );
 
         jButton1.setText("Actualizar");
@@ -102,16 +103,7 @@ public class Ejecución extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Bloqueados");
-
-        ColaBloqueados.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane2.setViewportView(ColaBloqueados);
-
-        jLabel3.setText("Cpus");
+        jLabel3.setText("En Ejecución");
 
         CpuList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -127,8 +119,6 @@ public class Ejecución extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("mover a ejecución");
-
         jButton4.setText("mover a listos");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -136,12 +126,21 @@ public class Ejecución extends javax.swing.JFrame {
             }
         });
 
-        jButton5.setText("Ejecutar");
+        jButton5.setText("Ejecutar FCFS");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
             }
         });
+
+        ColaListos.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane1.setViewportView(ColaListos);
+
+        jLabel1.setText("Listos");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -152,60 +151,65 @@ public class Ejecución extends javax.swing.JFrame {
                 .addComponent(jButton1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addComponent(jButton2)
-                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel2)
-                                .addGap(201, 201, 201)
-                                .addComponent(jLabel3))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(9, 9, 9)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(151, 151, 151)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton5))))
-                    .addComponent(jButton3))
-                .addContainerGap(39, Short.MAX_VALUE))
+                        .addGap(48, 48, 48)
+                        .addComponent(jButton2))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addGap(171, 171, 171)
+                                    .addComponent(jButton4)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                    .addContainerGap()
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(75, 75, 75))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                            .addComponent(jLabel1)
+                                            .addGap(109, 109, 109)))))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(jButton5)
+                                    .addGap(208, 208, 208))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                    .addComponent(jLabel3)
+                                    .addGap(68, 68, 68))))))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(70, 70, 70)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel3))
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(51, 51, 51)
                                 .addComponent(jButton5)))
                         .addGap(62, 62, 62))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(75, 75, 75)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton2)
                             .addComponent(jButton4))
                         .addGap(43, 43, 43)))
                 .addComponent(jButton1)
-                .addGap(18, 18, 18)
-                .addComponent(jButton3)
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -249,8 +253,9 @@ public class Ejecución extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
         System.out.println("Se estan ejecutando los procesos uwu onichan yamete kudasai");
+        // Toma de la lista de listos y ejecuta segun el numero de nucleos
+        simulator.ejecutarProcesos(this);
     }//GEN-LAST:event_jButton5ActionPerformed
-
 
     public void actualizarJListConCola(Cola<Proceso> cola, javax.swing.JList<String> jList) {
         // Crear un modelo de lista vacío
@@ -265,18 +270,92 @@ public class Ejecución extends javax.swing.JFrame {
         jList.setModel(modelo);
     }
 
-    public void actualizarCPUs(javax.swing.JList<String> jList) {
+    public void moverListosACpus() {
+        
+
+    }
+    
+    public void actualizarColaBloqueados(){
+        actualizarJListConCola(simulator.getBloqueados(), ColaBloqueados);
+    }
+    
+    public void actualizacionColaListos(){
+         actualizarJListConCola(simulator.getListos(), ColaListos);
+    }
+
+    //Toma la lista de cpus y la actualiza la lista de cpus del GUI en base a esa, tomando los nombres de los procesos
+    public void actualizarCPUsPorList(javax.swing.JList<String> jList, Simulator simulator, Lista<Nodo> cpus) {
+        DefaultListModel<String> modelo = new DefaultListModel<>();
+        Nodo pointer = (Nodo) cpus.getHead();
+        int coreNum = 0;
+        while (pointer != null) {
+            Proceso proceso = (Proceso) pointer.getElement();
+            if(proceso == null){
+                continue;
+            }
+            modelo.addElement(proceso.getName()
+                    + " id: " + proceso.getProcessID()
+                    + " status: " + proceso.getStatus()
+            );
+            pointer = (Nodo) pointer.getNext();
+            coreNum++;
+        }
+        jList.setModel(modelo);
+    }
+ 
+   public void actualizarEstadoPorID(int processID, String nuevoEstado, Simulator simulator) {
+        SwingUtilities.invokeLater(() -> { // Ejecuta la actualización en el hilo de la UI
+            Nodo pointer = (Nodo) simulator.getCpus().getHead();
+            DefaultListModel<String> modelo = (DefaultListModel<String>) CpuList.getModel();
+            //System.out.println("Actualizando estado");
+
+            while (pointer != null) {
+                Proceso proceso = (Proceso) pointer.getElement();
+                if(proceso == null){
+                    continue;
+                }
+                // Buscamos el proceso por ID
+                if (proceso.getProcessID() == processID) {
+                    // Volvemos a reconstruir el modelo de la lista para reflejar el cambio
+                    modelo.clear();
+                    Nodo pointerRefresh = (Nodo) simulator.getCpus().getHead();
+                    while (pointerRefresh != null) {
+                        Proceso procesoRefresh = (Proceso) pointerRefresh.getElement();
+                        modelo.addElement(procesoRefresh.getName()
+                                + " id: " + procesoRefresh.getProcessID()
+                                + " status: " + procesoRefresh.getStatus());
+                        pointerRefresh = (Nodo) pointerRefresh.getNext();
+                    }
+                    break;
+                }
+                pointer = (Nodo) pointer.getNext();
+            }
+
+            // Actualizamos el modelo de la lista en la interfaz
+            CpuList.setModel(modelo);
+        });
+    }
+
+    public void actualizarCPUs(javax.swing.JList<String> jList, Simulator simulator) {
         int nCores = simulator.getConfiguracion().getNumCores();
+        System.out.println("numero de nucleos: " + nCores);
         //Crea la lista con el numero de nucleos definido
         simulator.createDeafultCpus(nCores);
-        
+
         DefaultListModel<String> modelo = new DefaultListModel<>();
         for (int i = 0; i < nCores; i++) {
-            modelo.addElement("core " + (i+1) + ": N/A");
-            
+            modelo.addElement("core " + (i + 1) + ": N/A");
         }
-        
+
         jList.setModel(modelo);
+    }
+
+    public javax.swing.JList<String> getListaCpu() {
+        return CpuList;
+    }
+
+    public javax.swing.JList<String> getColaListos() {
+        return ColaListos;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -285,7 +364,6 @@ public class Ejecución extends javax.swing.JFrame {
     private javax.swing.JList<String> CpuList;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;

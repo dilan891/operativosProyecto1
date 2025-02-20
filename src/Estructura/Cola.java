@@ -86,6 +86,10 @@ public class Cola<T> implements Iterable<T> {
         };
     }
     
+    public boolean isEmpty(){
+        return frente == null;
+    }
+    
     // Método para imprimir la cola (opcional, para depuración)
     public void imprimirCola() {
         Nodo<T> actual = frente;

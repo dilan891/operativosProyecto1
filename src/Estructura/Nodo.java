@@ -18,7 +18,7 @@ public class Nodo<T> {
         return element;
     }
 
-    public void setElement(int element) {
+    public void setElement(Object element) {
         this.element = element;
     }
 

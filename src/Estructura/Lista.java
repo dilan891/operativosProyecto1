@@ -46,7 +46,7 @@ public class Lista<T> {
         System.out.println("\nTamanio de la lista: " + length);
     }
 
-    public void insertBegin(int element) {
+    public void insertBegin(Object element) {
         Nodo node = new Nodo(element);
         if (isEmpty()) {
             setHead((T) node);
@@ -89,6 +89,34 @@ public class Lista<T> {
 
     }
 
+    //Modifica la lista en un indice especifico
+    public void modifyInIndex(int element, int index){
+        if (isEmpty()) {
+            System.out.println("Lista Vacia");
+        } else {
+            if (index == 0) {
+                Nodo pointer = (Nodo) getHead();
+                pointer.setElement(element);
+            } else {
+                if (index < length) {
+                    Nodo pointer = (Nodo) getHead();
+                    int count = 0;
+
+                    while (pointer.getNext() != null && count < index) {
+                        pointer = (Nodo) pointer.getNext();
+
+                        count++;
+                    }
+                    pointer.setElement(element);
+
+                } else {
+                    System.out.println("Error in index");
+                }
+            }
+
+        }
+    }
+    
     public void insertInIndex(int element, int index) {
         Nodo node = new Nodo(element);
         if (isEmpty()) {
