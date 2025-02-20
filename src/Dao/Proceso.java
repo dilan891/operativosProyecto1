@@ -86,6 +86,7 @@ public class Proceso implements Runnable {
                 this.changeStatus("Blocked");
                 // Simula la espera por E/S
                 System.out.println("Proceso en espera de E/S...");
+                ///simulator.procesoTerminado(this);
                 try {
                     Thread.sleep(this.cyclesSatifaction * cicleDuration);
                 } catch (InterruptedException e) {
@@ -142,7 +143,7 @@ public class Proceso implements Runnable {
             case "Blocked":
                 //Inserta en cola de bloqueados
                 simulator.getBloqueados().encolar(this);
-                ventana.actualizarColaBloqueados();
+                this.ventana.actualizarColaBloqueados();
                 break;
             default:
                 break;
@@ -228,4 +229,20 @@ public class Proceso implements Runnable {
         this.simulator = simulator;
     }
 
+    public Integer getCyclesExeption() {
+        return cyclesExeption;
+    }
+
+    public void setCyclesExeption(Integer cyclesExeption) {
+        this.cyclesExeption = cyclesExeption;
+    }
+
+    public Integer getCyclesSatifaction() {
+        return cyclesSatifaction;
+    }
+
+    public void setCyclesSatifaction(Integer cyclesSatifaction) {
+        this.cyclesSatifaction = cyclesSatifaction;
+    }
+    
 }

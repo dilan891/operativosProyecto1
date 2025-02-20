@@ -123,14 +123,14 @@ public class LeerEscribirArchivo {
         }
     }
     
-    public void EscribirData(Lista<Proceso> lista){
+    public void EscribirData(Lista<Proceso> lista, Configuration config){
         try {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileDir, false))) {
                 writer.write("configuration:");
                 writer.newLine();
-                writer.write("num_cpu: 2");
+                writer.write("num_cpu: " + config.getNumCores());
                 writer.newLine();
-                writer.write("duration_cycle: 1000");
+                writer.write("duration_cycle: " + config.getCycleDuration());
                 writer.newLine();
                 writer.write("Procesos:");
                 writer.newLine();

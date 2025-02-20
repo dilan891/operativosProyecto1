@@ -79,6 +79,7 @@ public class Simulator {
             cpus.insertBegin(siguiente);
             siguiente.setProcessID(AutoId.generateID());
             siguiente.setSimulator(this);
+            siguiente.setVentana(ventana);
             Thread hilo = new Thread(siguiente);
             hilo.start();
         }

@@ -13,11 +13,4 @@ public class AutoId {
         return counter.incrementAndGet();
     }
 
-    public static void main(String[] args) {
-        // Ejemplo de uso
-        System.out.println("ID de proceso: " + generateID());
-        System.out.println("ID de proceso: " + generateID());
-        System.out.println("ID de proceso: " + generateID());
-    }
-
 }
