@@ -7,6 +7,8 @@ import GUI.Classes.Ejecucion;
 
 import java.util.List;
 import Dao.Semaphore;
+import Estructura.ListaP;
+import Estructura.NodoP;
 
 /**
  *
@@ -18,7 +20,9 @@ public class Simulator {
     private Cola bloqueados;
     private Configuration configuracion;
     Lista<Nodo> cpus;
+    private boolean ejecutando = false;
     private Ejecucion ventana;
+    String planificationType = "";
     // PoliticaPlanificacion politicaActual;
 
     // constructor
@@ -104,6 +108,7 @@ public class Simulator {
             return;
         }
 
+        this.ejecutando = true;
         // cantidad de nucleos
         int cantCores = configuracion.getNumCores();
 
@@ -160,7 +165,7 @@ public class Simulator {
             }
         }
         System.out.println("Finalizo la eliminacion");
-        
+
         // En lugar de reasignar, vacía la cola original y vuelve a llenarla con aux.
         while (!bloqueados.estaVacia()) {
             bloqueados.desencolar();
@@ -168,6 +173,50 @@ public class Simulator {
         while (!aux.estaVacia()) {
             bloqueados.encolar(aux.desencolar());
         }
+    }
+
+    //reordena la cola para que los procesos con menor numero de instrucciones esten al principio
+    public void reordenarColaSJF() {
+        // Creamos una lista temporal para almacenar los procesos de forma ordenada.
+        ListaP<Proceso> listaTemporal = new ListaP<>();
+
+        // Extraemos todos los procesos de la cola e insertamos ordenadamente en la lista temporal.
+        while (!listos.estaVacia()) {
+            Proceso p = (Proceso) listos.desencolar();
+            insertarOrdenado(listaTemporal, p);
+        }
+
+        // Volvemos a encolar los procesos en la cola, en el orden ordenado.
+        NodoP actual = listaTemporal.getHead();
+        while (actual != null) {
+            listos.encolar(actual.getElement());
+            actual = actual.getNext();
+        }
+
+    }
+
+    // Método auxiliar para insertar un proceso en orden en la listaTemporal
+    // Ordena de forma ascendente según instructionCant.
+    public static void insertarOrdenado(ListaP<Proceso> lista, Proceso p) {
+        // Si la lista está vacía o el proceso p tiene menos instrucciones que el primer elemento,
+        // se inserta al inicio.
+        NodoP cabeza = lista.getHead();
+        if (lista.isEmpty() || p.getInstructionCant() < ((Proceso) cabeza.getElement()).getInstructionCant()) {
+            lista.insertBegin(p);
+            return;
+        }
+
+        // De lo contrario, se busca la posición correcta.
+        NodoP actual = lista.getHead();
+        while (actual.getNext() != null
+                && ((Proceso) actual.getNext().getElement()).getInstructionCant() <= p.getInstructionCant()) {
+            actual = actual.getNext();
+        }
+
+        // Se crea un nuevo nodo para p e se inserta después de 'actual'
+        NodoP nuevoNodo = new NodoP(p);
+        nuevoNodo.setNext(actual.getNext());
+        actual.setNext(nuevoNodo);
     }
 
     public void createDeafultCpus(int nCPUS) {
@@ -211,6 +260,22 @@ public class Simulator {
 
     public void setVentana(Ejecucion ventana) {
         this.ventana = ventana;
+    }
+
+    public boolean isEjecutando() {
+        return ejecutando;
+    }
+
+    public void setEjecutando(boolean ejecutando) {
+        this.ejecutando = ejecutando;
+    }
+
+    public String getPlanificationType() {
+        return planificationType;
+    }
+
+    public void setPlanificationType(String planificationType) {
+        this.planificationType = planificationType;
     }
 
 }

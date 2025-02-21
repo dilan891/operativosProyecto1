@@ -22,7 +22,7 @@ public class Proceso implements Runnable {
     private Ejecucion ventana; //ventana donde se esta ejecuntado el proceso
 
     private String status;
-    
+
     private int ciclosEjecutados = 0;
 
     @Override
@@ -59,18 +59,34 @@ public class Proceso implements Runnable {
         this.changeStatus("Running");
 
         int cicleDuration = config.getCycleDuration(); // Duración de cada ciclo en milisegundos
+        int quantum = 2000;
 
         if (this.type.equals("cpu_bound")) {
-            for (int i = 1; i <= this.instructionCant; i++) {
+            int tiempoEjecutado = 0;
+            for (int i = ciclosEjecutados + 1; i <= this.instructionCant; i++) {
                 System.out.println("Instruccion " + i + " ejecutada.");
                 try {
                     Thread.sleep(cicleDuration);
+                    tiempoEjecutado += cicleDuration;
                 } catch (InterruptedException e) {
                     System.out.println("Proceso interrumpido.");
                     return;
                 }
+                ciclosEjecutados++;
+
+                // Si Round Robin está activado y el quantum se agotó, interrumpir el proceso
+                if (simulator.getPlanificationType().equals("Round Robin") && tiempoEjecutado >= quantum) {
+                    System.out.println("Quantum agotado, proceso interrumpido y enviado a la cola de listos.");
+                    this.changeStatus("Ready");
+                    simulator.getListos().encolar(this);
+                    ventana.actualizarJListConCola(simulator.getListos(), ventana.getColaListos());
+                    return; // Salir para permitir que otros procesos se ejecuten
+                }
             }
         } else if (this.type.equals("io_bound")) {
+            // Si la planificación es Round Robin, solo ejecuta hasta que se acabe el quantum
+            int instruccionesEjecutadasEnEsteTurno = 0;
+
             while (ciclosEjecutados < this.instructionCant) {
                 for (int i = 0; i < this.cyclesExeption && ciclosEjecutados < this.instructionCant; i++) {
                     System.out.println("Instruccion " + (ciclosEjecutados + 1) + " ejecutada.");
@@ -81,6 +97,16 @@ public class Proceso implements Runnable {
                         return;
                     }
                     ciclosEjecutados++;
+                    instruccionesEjecutadasEnEsteTurno++;
+
+                    // Si estamos en Round Robin y se agota el quantum, interrumpimos
+                    if (simulator.getPlanificationType().equals("Round Robin") && instruccionesEjecutadasEnEsteTurno >= quantum) {
+                        System.out.println("Quantum agotado, proceso interrumpido y enviado a la cola de listos.");
+                        this.changeStatus("Ready");
+                        simulator.getListos().encolar(this);
+                        ventana.actualizarJListConCola(simulator.getListos(), ventana.getColaListos());
+                        return; // Sale para que el proceso pueda volver a ejecutarse después
+                    }
                 }
                 //Cambia el estado a bloqueado
                 this.changeStatus("Blocked");
@@ -96,11 +122,14 @@ public class Proceso implements Runnable {
                 //Lo elimna de la cola de bloquedos
                 simulator.eliminarDeColaBloq(this.processID);
                 ventana.actualizarColaBloqueados();
-                
+
                 //Vuelve a insertarlo en la cola de listos
                 simulator.getListos().encolar(this);
+                if (simulator.getPlanificationType() == "SJF") {
+                    simulator.reordenarColaSJF();
+                }
                 ventana.actualizarJListConCola(simulator.getListos(), ventana.getColaListos());
-                
+
                 // Después de la espera de E/S, cambia el estado a "Ready" y lo mueve a la cola de listos
                 this.changeStatus("Ready");
                 //moverAColaDeListos(this);
@@ -244,5 +273,5 @@ public class Proceso implements Runnable {
     public void setCyclesSatifaction(Integer cyclesSatifaction) {
         this.cyclesSatifaction = cyclesSatifaction;
     }
-    
+
 }

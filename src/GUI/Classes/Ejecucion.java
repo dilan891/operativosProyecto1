@@ -16,7 +16,6 @@ import javax.swing.SwingUtilities;
 public class Ejecucion extends javax.swing.JFrame {
 
     Simulator simulator;
-    String planificationType = "";
 
     /**
      * Creates new form Ejecución
@@ -77,6 +76,8 @@ public class Ejecucion extends javax.swing.JFrame {
         exeptionCycle = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
+        jButton6 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -101,7 +102,7 @@ public class Ejecucion extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(125, Short.MAX_VALUE))
+                .addContainerGap(145, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -243,6 +244,20 @@ public class Ejecucion extends javax.swing.JFrame {
                 .addContainerGap(45, Short.MAX_VALUE))
         );
 
+        jButton6.setText("Ejecutar con SJF");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Ejecutar con Round Robin");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -260,8 +275,11 @@ public class Ejecucion extends javax.swing.JFrame {
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(72, 72, 72))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton5)
-                                .addGap(60, 60, 60)))))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(17, 17, 17)))))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(19, 19, 19)
@@ -290,7 +308,7 @@ public class Ejecucion extends javax.swing.JFrame {
                 .addGap(337, 337, 337)
                 .addComponent(jLabel5)
                 .addGap(18, 18, 18)
-                .addComponent(tipoPlanificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tipoPlanificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -322,7 +340,11 @@ public class Ejecucion extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(43, 43, 43)
-                        .addComponent(jButton5)))
+                        .addComponent(jButton5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)))
                 .addContainerGap(34, Short.MAX_VALUE))
         );
 
@@ -348,7 +370,7 @@ public class Ejecucion extends javax.swing.JFrame {
         // Toma de la lista de listos y ejecuta segun el numero de nucleos
         simulator.ejecutarProcesos(this);
         iniciarContadorCiclos(simulator.getConfiguracion().getCycleDuration());
-        this.planificationType = "FCFS";
+        simulator.setPlanificationType("FCFS");
         tipoPlanificacion.setText("FCFS");
     }//GEN-LAST:event_jButton5ActionPerformed
 
@@ -365,16 +387,22 @@ public class Ejecucion extends javax.swing.JFrame {
         } else {
             proceso.setType("io_bound");
         }
-        if (proceso.getType() == "io_bound") {
+        if ("io_bound".equals(proceso.getType())) {
+            if ("".equals(SatifactionCycle.getText()) || "".equals(exeptionCycle.getText())) {
+                System.out.println("Debe llenar los campos correctamente");
+                return;
+            }
             proceso.setCyclesSatifaction(Integer.parseInt(SatifactionCycle.getText()));
             proceso.setCyclesExeption(Integer.parseInt(exeptionCycle.getText()));
         }
-        switch (this.planificationType) {
+        switch (simulator.getPlanificationType()) {
             case "FCFS":
                 //Añade a la ultima posición
                 simulator.getListos().encolar(proceso);
                 break;
-        
+            case "SJF":
+                simulator.reordenarColaSJF();
+                actualizacionColaListos();
             default:
                 //Añade a la ultima posición por defecto
                 simulator.getListos().encolar(proceso);
@@ -382,7 +410,7 @@ public class Ejecucion extends javax.swing.JFrame {
         }
         //Actualiza la cola de listos
         this.actualizacionColaListos();
-        
+
         //Limpia los campos
         jTextField1.setText("");
         jTextField2.setText("");
@@ -404,6 +432,29 @@ public class Ejecucion extends javax.swing.JFrame {
     private void SatifactionCycleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SatifactionCycleActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_SatifactionCycleActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        //ordena la cola de listos segun la planificacion sjf
+        System.out.println("Reordenando la cola de listos");
+        simulator.reordenarColaSJF();
+        //Actualiza la cola de listos
+        this.actualizacionColaListos();
+        // Toma de la lista de listos y ejecuta segun el numero de nucleos
+        simulator.ejecutarProcesos(this);
+        iniciarContadorCiclos(simulator.getConfiguracion().getCycleDuration());
+        simulator.setPlanificationType("SJF");
+        tipoPlanificacion.setText("SJF");
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        //simulator.reordenarColaSJF();
+        simulator.setPlanificationType("Round Robin");
+        tipoPlanificacion.setText("Round Robin");
+        // Toma de la lista de listos y ejecuta segun el numero de nucleos
+        simulator.ejecutarProcesos(this);
+        iniciarContadorCiclos(simulator.getConfiguracion().getCycleDuration());
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     public void actualizarJListConCola(Cola<Proceso> cola, javax.swing.JList<String> jList) {
         // Crear un modelo de lista vacío
@@ -529,7 +580,9 @@ public class Ejecucion extends javax.swing.JFrame {
     private javax.swing.JTextField SatifactionCycle;
     private javax.swing.JTextField exeptionCycle;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
