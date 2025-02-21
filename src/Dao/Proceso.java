@@ -25,6 +25,8 @@ public class Proceso implements Runnable {
 
     private int ciclosEjecutados = 0;
 
+    private int ciclosDeEspera = 0;
+
     @Override
     public String toString() {
         return "ParametersProcess{" + "name=" + name + ", instructionCant=" + instructionCant + ", type=" + type + ", cyclesExeption=" + cyclesExeption + ", cyclesSatifaction=" + cyclesSatifaction + '}';
@@ -54,29 +56,32 @@ public class Proceso implements Runnable {
         this.status = "Ready";
     }
 
+    public int getCiclosEjecutados() {
+        return ciclosEjecutados;
+    }
+
     public void ejecutar(Configuration config) {
         System.out.println("Ejecutando proceso: " + name);
         this.changeStatus("Running");
 
         int cicleDuration = config.getCycleDuration(); // Duración de cada ciclo en milisegundos
-        int quantum = 2000;
+        int quantum = 5; // Cambia este valor a la cantidad de ciclos que deseas por quantum
 
         if (this.type.equals("cpu_bound")) {
-            int tiempoEjecutado = 0;
+            int ciclosEjecutados = 0;
             for (int i = ciclosEjecutados + 1; i <= this.instructionCant; i++) {
                 System.out.println("Instruccion " + i + " ejecutada.");
                 try {
                     Thread.sleep(cicleDuration);
-                    tiempoEjecutado += cicleDuration;
                 } catch (InterruptedException e) {
                     System.out.println("Proceso interrumpido.");
                     return;
                 }
                 ciclosEjecutados++;
 
-                // Si Round Robin está activado y el quantum se agotó, interrumpir el proceso
-                if (simulator.getPlanificationType().equals("Round Robin") && tiempoEjecutado >= quantum) {
-                    System.out.println("Quantum agotado, proceso interrumpido y enviado a la cola de listos.");
+                // Si Round Robin está activado y el quantum de ciclos se agotó, interrumpir el proceso
+                if (simulator.getPlanificationType().equals("Round Robin") && ciclosEjecutados >= quantum) {
+                    System.out.println("Quantum de ciclos agotado, proceso interrumpido y enviado a la cola de listos.");
                     this.changeStatus("Ready");
                     simulator.getListos().encolar(this);
                     ventana.actualizarJListConCola(simulator.getListos(), ventana.getColaListos());
@@ -84,9 +89,7 @@ public class Proceso implements Runnable {
                 }
             }
         } else if (this.type.equals("io_bound")) {
-            // Si la planificación es Round Robin, solo ejecuta hasta que se acabe el quantum
             int instruccionesEjecutadasEnEsteTurno = 0;
-
             while (ciclosEjecutados < this.instructionCant) {
                 for (int i = 0; i < this.cyclesExeption && ciclosEjecutados < this.instructionCant; i++) {
                     System.out.println("Instruccion " + (ciclosEjecutados + 1) + " ejecutada.");
@@ -99,40 +102,45 @@ public class Proceso implements Runnable {
                     ciclosEjecutados++;
                     instruccionesEjecutadasEnEsteTurno++;
 
-                    // Si estamos en Round Robin y se agota el quantum, interrumpimos
+                    // Si estamos en Round Robin y se agota el quantum de ciclos, interrumpimos
                     if (simulator.getPlanificationType().equals("Round Robin") && instruccionesEjecutadasEnEsteTurno >= quantum) {
-                        System.out.println("Quantum agotado, proceso interrumpido y enviado a la cola de listos.");
+                        System.out.println("Quantum de ciclos agotado, proceso interrumpido y enviado a la cola de listos.");
                         this.changeStatus("Ready");
                         simulator.getListos().encolar(this);
                         ventana.actualizarJListConCola(simulator.getListos(), ventana.getColaListos());
                         return; // Sale para que el proceso pueda volver a ejecutarse después
                     }
                 }
-                //Cambia el estado a bloqueado
+                // Cambia el estado a bloqueado
                 this.changeStatus("Blocked");
                 // Simula la espera por E/S
                 System.out.println("Proceso en espera de E/S...");
-                ///simulator.procesoTerminado(this);
                 try {
                     Thread.sleep(this.cyclesSatifaction * cicleDuration);
                 } catch (InterruptedException e) {
                     System.out.println("Proceso interrumpido durante la espera de E/S.");
                     return;
                 }
-                //Lo elimna de la cola de bloquedos
+
+                // Lo elimina de la cola de bloqueados
                 simulator.eliminarDeColaBloq(this.processID);
                 ventana.actualizarColaBloqueados();
 
-                //Vuelve a insertarlo en la cola de listos
+                // Vuelve a insertarlo en la cola de listos
                 simulator.getListos().encolar(this);
-                if (simulator.getPlanificationType() == "SJF") {
+                if (simulator.getPlanificationType().equals("SJF")) {
                     simulator.reordenarColaSJF();
+                }
+                else if(simulator.getPlanificationType().equals("SRT")){
+                    simulator.reordenarColaSRT();
+                }
+                else if(simulator.getPlanificationType().equals("HRRN")){
+                    simulator.reordenarColaHRRN();
                 }
                 ventana.actualizarJListConCola(simulator.getListos(), ventana.getColaListos());
 
                 // Después de la espera de E/S, cambia el estado a "Ready" y lo mueve a la cola de listos
                 this.changeStatus("Ready");
-                //moverAColaDeListos(this);
 
                 // 🚫 Terminar el hilo aquí para que el proceso no siga ejecutándose automáticamente
                 return;
@@ -185,6 +193,15 @@ public class Proceso implements Runnable {
 
     }
 
+    public void incrementarTiempoEspera(int cantidad) {
+        this.ciclosDeEspera += cantidad;
+    }
+
+    // Método para resetear el tiempo de espera (por ejemplo, cuando el proceso pasa a Running)
+    public void resetearTiempoEspera() {
+        this.ciclosDeEspera = 0;
+    }
+
     public String getName() {
         return name;
     }
@@ -215,6 +232,10 @@ public class Proceso implements Runnable {
 
     public void setNumberOfCyclesE(Integer numberOfCyclesE) {
         this.cyclesExeption = numberOfCyclesE;
+    }
+
+    public int getTiempoEspera() {
+        return ciclosDeEspera;
     }
 
     public Integer getNumberOfCyclesS() {

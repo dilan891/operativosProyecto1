@@ -19,6 +19,7 @@ import proyectoop.io.LeerEscribirArchivo;
 public class Ejecucion extends javax.swing.JFrame {
 
     Simulator simulator;
+    private Thread contador;
     //Cola copiaProcesos;
 
     /**
@@ -59,6 +60,7 @@ public class Ejecucion extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         ColaBloqueados = new javax.swing.JList<>();
         jLabel2 = new javax.swing.JLabel();
+        jButton7 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         CpuList = new javax.swing.JList<>();
@@ -89,6 +91,8 @@ public class Ejecucion extends javax.swing.JFrame {
         numeroCoresText = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         velocidadCiclos = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -101,6 +105,13 @@ public class Ejecucion extends javax.swing.JFrame {
 
         jLabel2.setText("Bloqueados");
 
+        jButton7.setText("Resetear");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -112,8 +123,11 @@ public class Ejecucion extends javax.swing.JFrame {
                         .addComponent(jLabel2))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(145, Short.MAX_VALUE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(47, 47, 47)
+                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(72, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -121,7 +135,8 @@ public class Ejecucion extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addGap(10, 10, 10)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
+                .addComponent(jButton7))
         );
 
         jLabel3.setText("Historial de ejecución");
@@ -277,6 +292,20 @@ public class Ejecucion extends javax.swing.JFrame {
 
         velocidadCiclos.setText("0");
 
+        jButton3.setText("Ejecutar con SRT");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jButton4.setText("Ejecutar con HRRN");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -297,7 +326,9 @@ public class Ejecucion extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(17, 17, 17)))))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -381,7 +412,11 @@ public class Ejecucion extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)))
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton4)))
                 .addContainerGap(34, Short.MAX_VALUE))
         );
 
@@ -440,6 +475,15 @@ public class Ejecucion extends javax.swing.JFrame {
             case "SJF":
                 simulator.reordenarColaSJF();
                 actualizacionColaListos();
+                break;
+            case "SRT":
+                simulator.reordenarColaSRT();
+                actualizacionColaListos();
+                break;
+            case "HRRN":
+                simulator.reordenarColaHRRN();
+                actualizacionColaListos();
+                break;
             default:
                 //Añade a la ultima posición por defecto
                 simulator.getListos().encolar(proceso);
@@ -455,7 +499,7 @@ public class Ejecucion extends javax.swing.JFrame {
         exeptionCycle.setText("");
         jRadioButton1.setSelected(false);
         jRadioButton2.setSelected(false);
-        
+
         String userHome = System.getProperty("user.home");
         File documentosDir = new File(userHome, Constants.DesktopDir);
         File archivoConfig = new File(documentosDir, "configuration_simulator.txt");
@@ -499,6 +543,58 @@ public class Ejecucion extends javax.swing.JFrame {
         iniciarContadorCiclos(simulator.getConfiguracion().getCycleDuration());
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        System.out.println("Reordenando la cola de listos");
+        simulator.reordenarColaSRT();
+        //Actualiza la cola de listos
+        this.actualizacionColaListos();
+        // Toma de la lista de listos y ejecuta segun el numero de nucleos
+        simulator.ejecutarProcesos(this);
+        iniciarContadorCiclos(simulator.getConfiguracion().getCycleDuration());
+        simulator.setPlanificationType("SRT");
+        tipoPlanificacion.setText("SRT");
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        // TODO add your handling code here:
+        System.out.println("Reordenando la cola de listos");
+        simulator.reordenarColaHRRN();
+        //Actualiza la cola de listos
+        this.actualizacionColaListos();
+        // Toma de la lista de listos y ejecuta segun el numero de nucleos
+        simulator.ejecutarProcesos(this);
+        iniciarContadorCiclos(simulator.getConfiguracion().getCycleDuration());
+        simulator.setPlanificationType("HRRN");
+        tipoPlanificacion.setText("HRRN");
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    //resetea toda la interfaz
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        //Detiene los procesos
+        detenerContador();
+        numeroCiclos.setText("0");
+        
+        
+        //inicia nuevo
+        String userHome = System.getProperty("user.home");
+        File documentosDir = new File(userHome, Constants.DesktopDir);
+        File archivoConfig = new File(documentosDir, "configuration_simulator.txt");
+        System.out.println("Se guarda en: " + archivoConfig.getAbsolutePath());
+        LeerEscribirArchivo archivo = new LeerEscribirArchivo(archivoConfig.getAbsolutePath());
+        this.simulator = archivo.LeerArchivo();
+        this.simulator.setVentana(this);
+        this.simulator.createDeafultCpus(simulator.getConfiguracion().getNumCores());
+        this.simulator.getListos().imprimirCola();
+        this.actualizarJListConCola(simulator.getListos(), ColaListos);
+        this.actualizarJListConCola(simulator.getBloqueados(), ColaBloqueados); //wuu
+        this.actualizarCPUs(this.CpuList, simulator);
+        numeroCoresText.setText(String.valueOf(simulator.getConfiguracion().getNumCores()));
+        velocidadCiclos.setText(String.valueOf(simulator.getConfiguracion().getCycleDuration()) + " ms");
+    }//GEN-LAST:event_jButton7ActionPerformed
+
     public void actualizarJListConCola(Cola<Proceso> cola, javax.swing.JList<String> jList) {
         // Crear un modelo de lista vacío
         DefaultListModel<String> modelo = new DefaultListModel<>();
@@ -512,24 +608,35 @@ public class Ejecucion extends javax.swing.JFrame {
         jList.setModel(modelo);
     }
 
-    //Inicia un cantador segun la velocidad que se le pase y se actualiza en la interfaz grafica el label de numero de ciclos
     public void iniciarContadorCiclos(int velocidad) {
-        Thread contador = new Thread(new Runnable() {
+        contador = new Thread(new Runnable() {
             @Override
             public void run() {
                 int ciclos = 0;
-                while (true) {
+                while (!Thread.currentThread().isInterrupted()) {
                     try {
                         Thread.sleep(velocidad);
                         ciclos++;
+                        if (simulator.getPlanificationType().equals("HRRN")) {
+                            simulator.actualizarTiempoEsperaEnCola();
+                        }
                         numeroCiclos.setText(Integer.toString(ciclos));
                     } catch (InterruptedException ex) {
-                        System.out.println("Error en el contador de ciclos");
+                        System.out.println("Contador interrumpido");
+                        // Vuelve a establecer el flag de interrupción y sale del bucle
+                        Thread.currentThread().interrupt();
+                        break;
                     }
                 }
             }
         });
         contador.start();
+    }
+
+    public void detenerContador() {
+        if (contador != null && contador.isAlive()) {
+            contador.interrupt();
+        }
     }
 
     public void actualizarColaBloqueados() {
@@ -624,8 +731,11 @@ public class Ejecucion extends javax.swing.JFrame {
     private javax.swing.JTextField exeptionCycle;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

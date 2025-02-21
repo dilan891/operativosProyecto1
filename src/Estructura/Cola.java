@@ -110,4 +110,8 @@ public class Cola<T> implements Iterable<T> {
         }
         return nuevaCola;
     }
+    
+    public Nodo getHead(){
+        return frente;
+    }
 }

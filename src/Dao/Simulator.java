@@ -5,8 +5,6 @@ import Estructura.Lista;
 import Estructura.Nodo;
 import GUI.Classes.Ejecucion;
 
-import java.util.List;
-import Dao.Semaphore;
 import Estructura.ListaP;
 import Estructura.NodoP;
 
@@ -153,6 +151,14 @@ public class Simulator {
         ventana.actualizarJListConCola(listos, ventana.getColaListos());
     }
 
+    /*public void detenerHilos() {
+        for (Thread hilo : listaHilos) {
+            if (hilo != null && hilo.isAlive()) {
+                hilo.interrupt();  // Solicita la interrupción del hilo
+            }
+        }
+    }*/
+
     public void eliminarDeColaBloq(int Id) {
         Cola aux = new Cola();
         System.out.println("Se eliminara de la cola de bloqueados: " + Id);
@@ -193,6 +199,113 @@ public class Simulator {
             actual = actual.getNext();
         }
 
+    }
+
+    // Reordena la cola para que los procesos con menor tiempo restante de ejecución estén al principio
+    public void reordenarColaSRT() {
+        // Creamos una lista temporal para almacenar los procesos de forma ordenada.
+        ListaP<Proceso> listaTemporal = new ListaP<>();
+
+        // Extraemos todos los procesos de la cola e insertamos ordenadamente en la lista temporal.
+        while (!listos.estaVacia()) {
+            Proceso p = (Proceso) listos.desencolar();
+            insertarOrdenadoSRT(listaTemporal, p);
+        }
+
+        // Volvemos a encolar los procesos en la cola, en el orden ordenado.
+        NodoP actual = listaTemporal.getHead();
+        while (actual != null) {
+            listos.encolar(actual.getElement());
+            actual = actual.getNext();
+        }
+    }
+
+    // Ordena de forma ascendente según los ciclos restantes de ejecución (instructionCant - ciclosEjecutados).
+    public static void insertarOrdenadoSRT(ListaP<Proceso> lista, Proceso p) {
+        // Calcula el tiempo restante en ciclos: cantidad de instrucciones - ciclos ejecutados
+        int tiempoRestante = p.getInstructionCant() - p.getCiclosEjecutados();
+
+        // Si la lista está vacía o el proceso p tiene menos ciclos restantes que el primer elemento,
+        // se inserta al inicio.
+        NodoP cabeza = lista.getHead();
+        if (lista.isEmpty() || tiempoRestante < ((Proceso) cabeza.getElement()).getInstructionCant() - ((Proceso) cabeza.getElement()).getCiclosEjecutados()) {
+            lista.insertBegin(p);
+            return;
+        }
+
+        // De lo contrario, se busca la posición correcta.
+        NodoP actual = lista.getHead();
+        while (actual.getNext() != null
+                && (tiempoRestante >= ((Proceso) actual.getNext().getElement()).getInstructionCant() - ((Proceso) actual.getNext().getElement()).getCiclosEjecutados())) {
+            actual = actual.getNext();
+        }
+
+        // Se crea un nuevo nodo para p e se inserta después de 'actual'
+        NodoP nuevoNodo = new NodoP(p);
+        nuevoNodo.setNext(actual.getNext());
+        actual.setNext(nuevoNodo);
+    }
+
+    // Reordena la cola para que los procesos con el mayor ratio de respuesta estén al principio
+    public void reordenarColaHRRN() {
+        // Creamos una lista temporal para almacenar los procesos de forma ordenada.
+        ListaP<Proceso> listaTemporal = new ListaP<>();
+
+        // Extraemos todos los procesos de la cola e insertamos ordenadamente en la lista temporal.
+        while (!listos.estaVacia()) {
+            Proceso p = (Proceso) listos.desencolar();
+            insertarOrdenadoHRRN(listaTemporal, p);
+        }
+
+        // Volvemos a encolar los procesos en la cola, en el orden ordenado.
+        NodoP actual = listaTemporal.getHead();
+        while (actual != null) {
+            listos.encolar(actual.getElement());
+            actual = actual.getNext();
+        }
+    }
+
+// Método auxiliar para insertar un proceso en orden en la listaTemporal según HRRN
+    public static void insertarOrdenadoHRRN(ListaP<Proceso> lista, Proceso p) {
+        // Calcula el tiempo de espera
+        int tiempoEspera = p.getTiempoEspera();
+
+        float hrrn = (float) (tiempoEspera + p.getInstructionCant()) / p.getInstructionCant();
+
+        // Si la lista está vacía o el proceso p tiene un mayor ratio de respuesta que el primer elemento,
+        // se inserta al inicio.
+        NodoP cabeza = lista.getHead();
+        if (lista.isEmpty() || hrrn > calcularHRRN((Proceso) cabeza.getElement())) {
+            lista.insertBegin(p);
+            return;
+        }
+
+        // De lo contrario, se busca la posición correcta.
+        NodoP actual = lista.getHead();
+        while (actual.getNext() != null
+                && hrrn <= calcularHRRN((Proceso) actual.getNext().getElement())) {
+            actual = actual.getNext();
+        }
+
+        // Se crea un nuevo nodo para p e se inserta después de 'actual'
+        NodoP nuevoNodo = new NodoP(p);
+        nuevoNodo.setNext(actual.getNext());
+        actual.setNext(nuevoNodo);
+    }
+
+// Método auxiliar para calcular el ratio de respuesta
+    public static float calcularHRRN(Proceso p) {
+        int tiempoEspera = p.getTiempoEspera();
+        return (float) (tiempoEspera + p.getInstructionCant()) / p.getInstructionCant();
+    }
+
+    public void actualizarTiempoEsperaEnCola() {
+        Nodo actual = listos.getHead();
+        while (actual != null) {
+            Proceso p = (Proceso) actual.getElement();
+            p.incrementarTiempoEspera(1); // Incrementa en 1 unidad (puede ser 1 ciclo o 1 milisegundo, según tu lógica)
+            actual = (Nodo) actual.getNext();
+        }
     }
 
     // Método auxiliar para insertar un proceso en orden en la listaTemporal
