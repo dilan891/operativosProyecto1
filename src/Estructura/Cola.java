@@ -99,4 +99,15 @@ public class Cola<T> implements Iterable<T> {
         }
         System.out.println();
     }
+
+    // Crea una copia de la cola actual en una nueva cola
+    public Cola createCopyCola(){
+        Cola<T> nuevaCola = new Cola<>();
+        Nodo<T> actual = frente;
+        while (actual != null) {
+            nuevaCola.encolar((T) actual.getElement());
+            actual = (Nodo<T>) actual.getNext();
+        }
+        return nuevaCola;
+    }
 }

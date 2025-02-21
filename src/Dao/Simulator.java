@@ -133,13 +133,13 @@ public class Simulator {
         //cpus.printLista()
 
         //clase semaforo
-        //Semaphore semaforo = new Semaphore(2);
+        Semaphore semaforo = new Semaphore(3);
         //ejecuta cada proceso en un hilo distinto
         for (int i = 0; i < cantCores; i++) {
             Proceso proceso = (Proceso) cpus.get(i);
             proceso.setSimulator(this);
             proceso.setVentana(ventana);
-            //proceso.setSemaforo(semaforo);
+            proceso.setSemaforo(semaforo);
             if (proceso != null) {
                 Thread hilo = new Thread(proceso);
                 hilo.start();

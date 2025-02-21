@@ -6,8 +6,11 @@ import Dao.Simulator;
 import Estructura.Cola;
 import Estructura.Lista;
 import Estructura.Nodo;
+import assets.Constants;
+import java.io.File;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
+import proyectoop.io.LeerEscribirArchivo;
 
 /**
  *
@@ -16,6 +19,7 @@ import javax.swing.SwingUtilities;
 public class Ejecucion extends javax.swing.JFrame {
 
     Simulator simulator;
+    //Cola copiaProcesos;
 
     /**
      * Creates new form Ejecución
@@ -32,6 +36,9 @@ public class Ejecucion extends javax.swing.JFrame {
         this.actualizarCPUs(this.CpuList, simulator);
         simulator.setVentana(this);
         this.simulator = simulator;
+        numeroCoresText.setText(String.valueOf(simulator.getConfiguracion().getNumCores()));
+        velocidadCiclos.setText(String.valueOf(simulator.getConfiguracion().getCycleDuration()) + " ms");
+        //this.copiaProcesos = simulator.getListos().createCopyCola();
     }
 
     public Simulator getSimulator() {
@@ -78,6 +85,10 @@ public class Ejecucion extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jButton6 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        numeroCoresText = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        velocidadCiclos = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -258,6 +269,14 @@ public class Ejecucion extends javax.swing.JFrame {
             }
         });
 
+        jLabel9.setText("número de cores:");
+
+        numeroCoresText.setText("0");
+
+        jLabel12.setText("Velocidad: ");
+
+        velocidadCiclos.setText("0");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -290,20 +309,29 @@ public class Ejecucion extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
-                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(36, 36, 36))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(ConfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE))))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel3)
-                                .addGap(91, 91, 91))))))
+                                .addGap(91, 91, 91))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(ConfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                    .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addGap(35, 35, 35)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                    .addComponent(numeroCoresText, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+                                                    .addComponent(velocidadCiclos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                        .addGap(36, 36, 36))))))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(337, 337, 337)
                 .addComponent(jLabel5)
@@ -316,14 +344,23 @@ public class Ejecucion extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(numeroCiclos))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(14, 14, 14)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel4)
+                                    .addComponent(numeroCiclos)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(23, 23, 23)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel9)
+                                    .addComponent(numeroCoresText))))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
-                            .addComponent(tipoPlanificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tipoPlanificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel12)
+                            .addComponent(velocidadCiclos))
                         .addGap(32, 32, 32)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -418,7 +455,13 @@ public class Ejecucion extends javax.swing.JFrame {
         exeptionCycle.setText("");
         jRadioButton1.setSelected(false);
         jRadioButton2.setSelected(false);
-
+        
+        String userHome = System.getProperty("user.home");
+        File documentosDir = new File(userHome, Constants.DesktopDir);
+        File archivoConfig = new File(documentosDir, "configuration_simulator.txt");
+        System.out.println("Se guarda en: " + archivoConfig.getAbsolutePath());
+        LeerEscribirArchivo archivo = new LeerEscribirArchivo(archivoConfig.getAbsolutePath());
+        archivo.EscribirProceso(proceso);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
@@ -586,6 +629,7 @@ public class Ejecucion extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -593,6 +637,7 @@ public class Ejecucion extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JRadioButton jRadioButton1;
@@ -603,6 +648,8 @@ public class Ejecucion extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JLabel numeroCiclos;
+    private javax.swing.JLabel numeroCoresText;
     private javax.swing.JLabel tipoPlanificacion;
+    private javax.swing.JLabel velocidadCiclos;
     // End of variables declaration//GEN-END:variables
 }

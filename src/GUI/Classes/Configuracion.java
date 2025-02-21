@@ -4,6 +4,7 @@ import Dao.Configuration;
 import Dao.Proceso;
 import Dao.Simulator;
 import Estructura.Lista;
+import assets.Constants;
 import java.io.File;
 import proyectoop.io.LeerEscribirArchivo;
 
@@ -314,7 +315,7 @@ public class Configuracion extends javax.swing.JFrame {
             return;
         }
         String userHome = System.getProperty("user.home");
-        File documentosDir = new File(userHome, "Desktop");
+        File documentosDir = new File(userHome, Constants.DesktopDir);
         File archivoConfig = new File(documentosDir, "configuration_simulator.txt");
         System.out.println("Se guarda en: " + archivoConfig.getAbsolutePath());
         LeerEscribirArchivo archivo = new LeerEscribirArchivo(archivoConfig.getAbsolutePath());

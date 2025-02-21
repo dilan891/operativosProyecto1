@@ -1,10 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package GUI.Classes;
 
 import Dao.Simulator;
+import assets.Constants;
 import java.io.File;
 import proyectoop.io.LeerEscribirArchivo;
 
@@ -140,7 +137,7 @@ public class Menu extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         String userHome = System.getProperty("user.home");
-        File documentosDir = new File(userHome, "Desktop");
+        File documentosDir = new File(userHome, Constants.DesktopDir);
         File archivoConfig = new File(documentosDir, "configuration_simulator.txt");
         
         LeerEscribirArchivo data = new LeerEscribirArchivo(archivoConfig.getAbsolutePath());

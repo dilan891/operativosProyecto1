@@ -147,6 +147,23 @@ public class LeerEscribirArchivo {
             e.printStackTrace();
         }
     }
+    
+    //Añade un proceso al archivo
+    //El proceso se añade al final del archivo
+    public void EscribirProceso(Proceso p){
+        try {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileDir, true))) {
+                writer.write("- name: " + p.getName() + ", instruction: " + p.getInstructionCant() + ", type: " + p.getType());
+                if (p.getType().equals("io_bound")) {
+                    writer.write(", cycle_exeption: " + p.getNumberOfCyclesE() + ", cycle_satisfaction: " + p.getNumberOfCyclesS());
+                }
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Se guardo");
+    }
 
     public String getFileName() {
         return fileDir;
